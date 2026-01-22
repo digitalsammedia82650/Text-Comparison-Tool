@@ -1,113 +1,222 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Content Integrity Checker - Tool</title>
-    <style>
-        /* All your CSS remains here */
-        .ai-integrity-tool {
-            --primary:#2563eb; --bg:#f1f5f9; --card:#ffffff; --text:#0f172a; --muted:#64748b;
-            font-family:system-ui, sans-serif; background:var(--bg); color:var(--text); padding:30px;
-        }
-        .ai-integrity-tool * { box-sizing:border-box; }
-        .ai-integrity-tool .container { max-width:1200px; margin:auto; }
-        .ai-integrity-tool h1 { text-align:center; margin-bottom:10px; }
-        .ai-integrity-tool .desc { text-align:center; color:var(--muted); max-width:900px; margin:0 auto 30px; }
-        .ai-integrity-tool .grid { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
-        @media (max-width: 768px) { .ai-integrity-tool .grid { grid-template-columns: 1fr; } }
-        .ai-integrity-tool textarea { width:100%; min-height:240px; padding:15px; border-radius:12px; border:1px solid #cbd5e1; font-size:15px; }
-        .ai-integrity-tool button { margin:30px auto; display:block; padding:14px 40px; font-size:16px; border:none; border-radius:999px; background:var(--primary); color:#fff; cursor:pointer; }
-        .ai-integrity-tool .card { background:var(--card); border-radius:16px; padding:20px; box-shadow:0 10px 25px rgba(0,0,0,.05); margin-bottom:20px; }
-        .ai-integrity-tool .score { font-weight:600; color:var(--primary); }
-        .ai-integrity-tool .meter { background:#e5e7eb; border-radius:999px; overflow:hidden; height:16px; margin:8px 0; }
-        .ai-integrity-tool .meter span { display:block; height:100%; background:linear-gradient(90deg,#22c55e,#eab308,#ef4444); }
-        .ai-integrity-tool .match { padding:12px; margin-bottom:10px; border-radius:8px; }
-        .ai-integrity-tool .heat-high { background:#fee2e2; border-left:4px solid #ef4444; }
-        .ai-integrity-tool .heat-mid { background:#ffedd5; border-left:4px solid #f97316; }
-        .ai-integrity-tool .heat-low { background:#fef9c3; border-left:4px solid #eab308; }
-        .ai-integrity-tool .heat-safe { background:#dcfce7; border-left:4px solid #22c55e; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>AI Content Integrity Checker – Keyword Loss & Plagiarism Risk</title>
+
+<style>
+.ai-integrity-tool {
+  --primary:#2563eb; --bg:#f1f5f9; --card:#ffffff; --text:#0f172a; --muted:#64748b;
+  font-family:system-ui, sans-serif; background:var(--bg); color:var(--text); padding:30px;
+}
+
+.ai-integrity-tool * { box-sizing:border-box; }
+.ai-integrity-tool .container { max-width:1200px; margin:auto; }
+.ai-integrity-tool h1 { text-align:center; margin-bottom:10px; }
+.ai-integrity-tool .desc { text-align:center; color:var(--muted); max-width:900px; margin:0 auto 30px; }
+
+/* Input Styles */
+.ai-integrity-tool .keyword-input-wrapper { margin-bottom: 20px; }
+.ai-integrity-tool .keyword-input {
+    width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #cbd5e1;
+    font-size: 14px; margin-top: 5px; background: #fff;
+}
+
+.ai-integrity-tool .grid { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+.ai-integrity-tool textarea { width:100%; min-height:240px; padding:15px; border-radius:12px; border:1px solid #cbd5e1; font-size:15px; }
+
+.ai-integrity-tool button { margin:30px auto; display:block; padding:14px 40px; font-size:16px; border:none; border-radius:999px; background:var(--primary); color:#fff; cursor:pointer; }
+
+.ai-integrity-tool .card { background:var(--card); border-radius:16px; padding:20px; box-shadow:0 10px 25px rgba(0,0,0,.05); margin-bottom:20px; }
+.ai-integrity-tool h3 { margin-top: 0; font-size: 18px; border-bottom: 1px solid #eee; padding-bottom: 10px; margin-bottom: 15px; }
+
+/* Result Badges */
+.ai-integrity-tool .badge-list { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 15px; }
+.ai-integrity-tool .badge { padding: 4px 10px; border-radius: 4px; font-size: 13px; font-weight: 500; }
+.ai-integrity-tool .badge-found { background: #dcfce7; color: #166534; border: 1px solid #bbf7d0; }
+.ai-integrity-tool .badge-lost { background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; text-decoration: line-through; }
+
+/* Warning Box for Lost Keywords */
+.ai-integrity-tool .lost-summary-box { 
+    background: #fff5f5; border-left: 5px solid #ef4444; padding: 15px; border-radius: 4px; 
+}
+.ai-integrity-tool .lost-summary-box strong { color: #c53030; display: block; margin-bottom: 5px; }
+.ai-integrity-tool .lost-list-text { color: #c53030; font-weight: 600; font-size: 15px; }
+
+.ai-integrity-tool .score { font-weight:600; color:var(--primary); }
+.ai-integrity-tool .meter { background:#e5e7eb; border-radius:999px; overflow:hidden; height:16px; margin:8px 0; }
+.ai-integrity-tool .meter span { display:block; height:100%; background:linear-gradient(90deg,#22c55e,#eab308,#ef4444); }
+
+.ai-integrity-tool .match { padding:12px; margin-bottom:10px; border-radius:8px; }
+.ai-integrity-tool .heat-high { background:#fee2e2; border-left:4px solid #ef4444; }
+.ai-integrity-tool .heat-mid { background:#ffedd5; border-left:4px solid #f97316; }
+.ai-integrity-tool .heat-low { background:#fef9c3; border-left:4px solid #eab308; }
+.ai-integrity-tool .heat-safe { background:#dcfce7; border-left:4px solid #22c55e; }
+</style>
 </head>
+
 <body>
 
 <div class="ai-integrity-tool" id="aiTool">
-    <div class="container">
-        <h1>AI Content Integrity Checker</h1>
-        <p class="desc">Compare original content with AI-generated text to detect keyword loss and plagiarism risk.</p>
-        <div class="grid">
-            <textarea id="textA" placeholder="Original Content (can include H1 / H2 HTML)"></textarea>
-            <textarea id="textB" placeholder="AI-Generated / Rewritten Content"></textarea>
-        </div>
-        <button onclick="compare()">Analyze Content Integrity</button>
-        <div class="card">
-            <h3>Content Similarity Score</h3>
-            <div class="meter"><span id="similarityBar"></span></div>
-            <div id="overallScore">—</div>
-        </div>
-        <div class="card"><h3>Plagiarism Risk Indicator</h3><div id="plagiarismRisk">—</div></div>
-        <div class="card"><h3>Keyword Loss Warning (Weighted)</h3><div id="keywordLossResult">—</div></div>
-        <div class="card"><h3>AI Rewrite Quality Score</h3><div id="qualityScore">—</div></div>
-        <div class="card"><h3>Plagiarism Heatmap</h3><div id="sentenceResults">—</div></div>
+  <div class="container">
+    <h1>AI Content Integrity Checker</h1>
+    <p class="desc">Compare original and AI-generated text to ensure SEO keywords and integrity are maintained.</p>
+
+    <!-- Target Keyword Box -->
+    <div class="keyword-input-wrapper">
+        <label><strong>Target Keywords (Optional):</strong> <em>Separate with commas (e.g. SEO, Marketing, AI)</em></label>
+        <input type="text" id="manualKeywords" class="keyword-input" placeholder="Enter keywords you MUST keep...">
     </div>
+
+    <div class="grid">
+      <textarea id="textA" placeholder="Original Content (can include H1 / H2 HTML)"></textarea>
+      <textarea id="textB" placeholder="AI-Generated / Rewritten Content"></textarea>
+    </div>
+
+    <button onclick="compare()">Analyze Content Integrity</button>
+
+    <!-- MANUAL KEYWORD SECTION -->
+    <div id="manualKeywordCard" class="card" style="display:none;">
+      <h3>Manual Keyword Analysis</h3>
+      <div class="badge-list" id="manualKeywordBadges"></div>
+      
+      <!-- New dedicated section for Lost Keywords -->
+      <div id="lostSummarySection" class="lost-summary-box" style="display:none;">
+          <strong>🚨 Critical SEO Alert: Missing Keywords</strong>
+          <div id="lostListText" class="lost-list-text"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Content Similarity Score</h3>
+      <div class="meter"><span id="similarityBar"></span></div>
+      <div id="overallScore">—</div>
+    </div>
+
+    <div class="card">
+      <h3>Structural Keyword Loss (Weighted from HTML)</h3>
+      <div id="keywordLossResult">—</div>
+    </div>
+
+    <div class="card">
+      <h3>AI Rewrite Quality Score</h3>
+      <div id="qualityScore">—</div>
+    </div>
+
+    <div class="card">
+      <h3>Plagiarism Heatmap</h3>
+      <div id="sentenceResults">—</div>
+    </div>
+
+  </div>
 </div>
 
 <script>
-/* CORE LOGIC */
 const stopWords = new Set(["the","is","a","an","to","and","or","of","in","on","for","with","this","that","by","as","are","was","were","be","has","have"]);
 const normalize = t => t.toLowerCase().replace(/[^\w\s]/g,"").replace(/\s+/g," ").trim();
 const tokenize = t => normalize(t).split(" ").filter(w => w && !stopWords.has(w));
 const splitSentences = t => t.match(/[^.!?]+[.!?]?/g) || [];
 
 function similarity(a,b){
-    const A=new Set(tokenize(a)), B=new Set(tokenize(b));
-    const common=[...A].filter(x=>B.has(x));
-    return common.length/Math.max(A.size,B.size,1);
+  const A=new Set(tokenize(a)), B=new Set(tokenize(b));
+  const common=[...A].filter(x=>B.has(x));
+  return common.length/Math.max(A.size,B.size,1);
 }
 
 function extractWeightedKeywords(html){
-    const temp=document.createElement("div");
-    temp.innerHTML=html;
-    const weights={};
-    const add=(words,w)=>words.forEach(k=>{ if(!k||stopWords.has(k))return; weights[k]=(weights[k]||0)+w; });
-    temp.querySelectorAll("h1").forEach(h=>add(tokenize(h.innerText),3));
-    temp.querySelectorAll("h2").forEach(h=>add(tokenize(h.innerText),2));
-    add(tokenize(temp.innerText),1);
-    return weights;
-}
-
-function heatClass(s){
-    if(s>=0.8) return "heat-high";
-    if(s>=0.6) return "heat-mid";
-    if(s>=0.4) return "heat-low";
-    return "heat-safe";
+  const temp=document.createElement("div");
+  temp.innerHTML=html;
+  const weights={};
+  const add=(words,w)=>words.forEach(k=>{ if(!k||stopWords.has(k))return; weights[k]=(weights[k]||0)+w; });
+  temp.querySelectorAll("h1").forEach(h=>add(tokenize(h.innerText),3));
+  temp.querySelectorAll("h2").forEach(h=>add(tokenize(h.innerText),2));
+  add(tokenize(temp.innerText),1);
+  return weights;
 }
 
 function compare(){
-    const A=document.getElementById('textA').value, B=document.getElementById('textB').value;
-    if(!A||!B) return alert("Paste both contents");
-    const SA=splitSentences(A), SB=splitSentences(B);
-    let matches=[], total=0;
-    SA.forEach(sa=>{
-        let best=0, sbest="";
-        SB.forEach(sb=>{ const s=similarity(sa,sb); if(s>best){best=s; sbest=sb;} });
-        if(best>=0.4){matches.push({sa,sb:sbest,score:best}); total+=best;}
+  const A=document.getElementById('textA').value;
+  const B=document.getElementById('textB').value;
+  const MK=document.getElementById('manualKeywords').value;
+
+  if(!A||!B) return alert("Please paste both contents to begin analysis.");
+
+  const SA=splitSentences(A), SB=splitSentences(B);
+  const B_lower = B.toLowerCase();
+  let totalSimScore=0, matches=[];
+
+  SA.forEach(sa=>{
+    let best=0, sbest="";
+    SB.forEach(sb=>{
+      const s=similarity(sa,sb);
+      if(s>best){best=s; sbest=sb;}
     });
-    const sim=((total/Math.max(SA.length,1))*100).toFixed(1);
-    document.getElementById('similarityBar').style.width=sim+"%";
-    document.getElementById('overallScore').innerHTML=`<span class="score">${sim}% similarity</span>`;
-    document.getElementById('plagiarismRisk').innerText = sim>=70?"🔴 High plagiarism risk":sim>=40?"🟠 Medium plagiarism risk":"🟢 Low plagiarism risk";
-    const weighted=extractWeightedKeywords(A);
-    const Btokens=new Set(tokenize(B));
-    let lost=0,totalW=0;
-    for(let k in weighted){ totalW+=weighted[k]; if(!Btokens.has(k)) lost+=weighted[k]; }
-    document.getElementById('keywordLossResult').innerHTML = lost>0?`⚠️ <strong>${lost}</strong> weighted keyword importance lost` : "✅ No critical keyword loss detected";
-    const seo=((totalW-lost)/Math.max(totalW,1))*100;
-    const originality=100-sim;
-    const quality=Math.round(seo*0.6 + originality*0.4);
-    document.getElementById('qualityScore').innerHTML = `<strong>${quality}/100</strong><br>SEO Retention: ${seo.toFixed(1)}%<br>Originality: ${originality.toFixed(1)}%`;
-    document.getElementById('sentenceResults').innerHTML = matches.map(m=>`<div class="match ${heatClass(m.score)}"><strong>Original:</strong> ${m.sa}<br><strong>AI:</strong> ${m.sb}<br><span class="score">${(m.score*100).toFixed(0)}%</span></div>`).join("") || "No overlapping sentences found.";
+    if(best>=0.4){matches.push({sa,sb:sbest,score:best}); totalSimScore+=best;}
+  });
+
+  const sim=((totalSimScore/Math.max(SA.length,1))*100).toFixed(1);
+  document.getElementById('similarityBar').style.width=sim+"%";
+  document.getElementById('overallScore').innerHTML=`<span class="score">${sim}% similarity</span>`;
+
+  // --- MANUAL KEYWORD LOGIC ---
+  const badgeContainer = document.getElementById('manualKeywordBadges');
+  const lostSummaryBox = document.getElementById('lostSummarySection');
+  const lostListDisplay = document.getElementById('lostListText');
+  const manualCard = document.getElementById('manualKeywordCard');
+
+  if(MK.trim() !== ""){
+      const targetKWs = MK.split(",").map(k => k.trim()).filter(k => k);
+      let badgesHTML = "";
+      let lostKWs = [];
+
+      targetKWs.forEach(kw => {
+          const found = B_lower.includes(kw.toLowerCase());
+          if (found) {
+              badgesHTML += `<span class="badge badge-found">✔ ${kw}</span>`;
+          } else {
+              badgesHTML += `<span class="badge badge-lost">✘ ${kw}</span>`;
+              lostKWs.push(kw);
+          }
+      });
+
+      manualCard.style.display = "block";
+      badgeContainer.innerHTML = badgesHTML;
+
+      if(lostKWs.length > 0) {
+          lostSummaryBox.style.display = "block";
+          lostListDisplay.innerText = lostKWs.join(", ");
+      } else {
+          lostSummaryBox.style.display = "none";
+      }
+  } else {
+      manualCard.style.display = "none";
+  }
+
+  // --- WEIGHTED HTML KEYWORD LOGIC ---
+  const weighted=extractWeightedKeywords(A);
+  const Btokens = new Set(tokenize(B));
+  let lostWeight=0, totalW=0;
+  for(let k in weighted){
+    totalW+=weighted[k];
+    if(!Btokens.has(k)) lostWeight+=weighted[k];
+  }
+
+  document.getElementById('keywordLossResult').innerHTML = lostWeight>0?`⚠️ <strong>${lostWeight}</strong> importance points lost from original HTML structure.` :"✅ No critical keyword loss detected from original structure.";
+
+  const seo=((totalW-lostWeight)/Math.max(totalW,1))*100;
+  const originality=100-sim;
+  const quality=Math.round(seo*0.6 + originality*0.4);
+
+  document.getElementById('qualityScore').innerHTML = `<strong>${quality}/100</strong><br>SEO Retention: ${seo.toFixed(1)}%<br>Originality: ${originality.toFixed(1)}%`;
+
+  document.getElementById('sentenceResults').innerHTML = matches.map(m=>`
+      <div class="match ${m.score>=0.8?'heat-high':m.score>=0.6?'heat-mid':m.score>=0.4?'heat-low':'heat-safe'}">
+        <strong>Original:</strong> ${m.sa}<br><strong>AI:</strong> ${m.sb}<br><span class="score">${(m.score*100).toFixed(0)}%</span>
+      </div>`).join("") || "No overlapping sentences found.";
 }
 </script>
+
 </body>
 </html>
