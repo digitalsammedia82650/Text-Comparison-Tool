@@ -3,57 +3,60 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>AI Content Integrity Checker – Keyword Loss & Plagiarism Risk</title>
+<title>AI Content Integrity Checker – Dual Mode Keyword Analysis</title>
 
 <style>
 .ai-integrity-tool {
   --primary:#2563eb; --bg:#f1f5f9; --card:#ffffff; --text:#0f172a; --muted:#64748b;
   font-family:system-ui, sans-serif; background:var(--bg); color:var(--text); padding:30px;
 }
-
 .ai-integrity-tool * { box-sizing:border-box; }
 .ai-integrity-tool .container { max-width:1200px; margin:auto; }
 .ai-integrity-tool h1 { text-align:center; margin-bottom:10px; }
 .ai-integrity-tool .desc { text-align:center; color:var(--muted); max-width:900px; margin:0 auto 30px; }
 
-/* Input Styles */
-.ai-integrity-tool .keyword-input-wrapper { margin-bottom: 20px; }
-.ai-integrity-tool .keyword-input {
-    width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #cbd5e1;
-    font-size: 14px; margin-top: 5px; background: #fff;
+/* Input Styling */
+.ai-integrity-tool .input-section { background: var(--card); padding: 25px; border-radius: 16px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); margin-bottom: 25px; }
+.ai-integrity-tool label { display: block; font-weight: 700; margin-bottom: 8px; font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px; }
+
+/* The Third Box: Manual Keywords */
+.ai-integrity-tool .manual-box {
+    width: 100%; padding: 15px; border-radius: 8px; border: 2px solid #e2e8f0;
+    font-size: 15px; margin-bottom: 25px; outline: none; transition: border-color 0.2s; background: #fff;
 }
+.ai-integrity-tool .manual-box:focus { border-color: var(--primary); }
 
 .ai-integrity-tool .grid { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
-.ai-integrity-tool textarea { width:100%; min-height:240px; padding:15px; border-radius:12px; border:1px solid #cbd5e1; font-size:15px; }
+.ai-integrity-tool textarea { width:100%; min-height:300px; padding:15px; border-radius:12px; border:1px solid #cbd5e1; font-size:15px; resize: vertical; }
 
-.ai-integrity-tool button { margin:30px auto; display:block; padding:14px 40px; font-size:16px; border:none; border-radius:999px; background:var(--primary); color:#fff; cursor:pointer; }
+.ai-integrity-tool button.analyze-btn { 
+    margin:30px auto; display:block; padding:18px 60px; font-size:18px; font-weight: 800;
+    border:none; border-radius:999px; background:var(--primary); color:#fff; cursor:pointer;
+    box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.3); transition: transform 0.2s;
+}
+.ai-integrity-tool button.analyze-btn:active { transform: scale(0.98); }
 
 .ai-integrity-tool .card { background:var(--card); border-radius:16px; padding:20px; box-shadow:0 10px 25px rgba(0,0,0,.05); margin-bottom:20px; }
-.ai-integrity-tool h3 { margin-top: 0; font-size: 18px; border-bottom: 1px solid #eee; padding-bottom: 10px; margin-bottom: 15px; }
 
-/* Result Badges */
-.ai-integrity-tool .badge-list { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 15px; }
-.ai-integrity-tool .badge { padding: 4px 10px; border-radius: 4px; font-size: 13px; font-weight: 500; }
-.ai-integrity-tool .badge-found { background: #dcfce7; color: #166534; border: 1px solid #bbf7d0; }
-.ai-integrity-tool .badge-lost { background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; text-decoration: line-through; }
+/* Results Styling */
+.ai-integrity-tool .badge-list { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.ai-integrity-tool .badge { padding: 6px 12px; border-radius: 6px; font-size: 13px; font-weight: 700; }
+.ai-integrity-tool .found { background: #dcfce7; color: #166534; border: 1px solid #bbf7d0; }
+.ai-integrity-tool .lost { background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; text-decoration: line-through; }
 
-/* Warning Box for Lost Keywords */
-.ai-integrity-tool .lost-summary-box { 
-    background: #fff5f5; border-left: 5px solid #ef4444; padding: 15px; border-radius: 4px; 
-}
-.ai-integrity-tool .lost-summary-box strong { color: #c53030; display: block; margin-bottom: 5px; }
-.ai-integrity-tool .lost-list-text { color: #c53030; font-weight: 600; font-size: 15px; }
+.ai-integrity-tool .lost-alert { background: #fff5f5; border-left: 6px solid #ef4444; padding: 15px; margin-top: 15px; border-radius: 8px; }
+.ai-integrity-tool .lost-alert strong { color: #c53030; font-size: 14px; }
+.ai-integrity-tool .lost-alert p { color: #e53e3e; margin: 5px 0 0 0; font-weight: 800; font-size: 17px; }
 
-.ai-integrity-tool .score { font-weight:600; color:var(--primary); }
-.ai-integrity-tool .meter { background:#e5e7eb; border-radius:999px; overflow:hidden; height:16px; margin:8px 0; }
-.ai-integrity-tool .meter span { display:block; height:100%; background:linear-gradient(90deg,#22c55e,#eab308,#ef4444); }
+.ai-integrity-tool .score-val { font-weight:800; color:var(--primary); font-size: 24px; }
+.ai-integrity-tool .meter { background:#e5e7eb; border-radius:999px; overflow:hidden; height:20px; margin:10px 0; }
+.ai-integrity-tool .meter span { display:block; height:100%; background:linear-gradient(90deg,#22c55e,#eab308,#ef4444); transition: width 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
 
-.ai-integrity-tool .match { padding:12px; margin-bottom:10px; border-radius:8px; }
-.ai-integrity-tool .heat-high { background:#fee2e2; border-left:4px solid #ef4444; }
-.ai-integrity-tool .heat-mid { background:#ffedd5; border-left:4px solid #f97316; }
-.ai-integrity-tool .heat-low { background:#fef9c3; border-left:4px solid #eab308; }
-.ai-integrity-tool .heat-safe { background:#dcfce7; border-left:4px solid #22c55e; }
+.ai-integrity-tool .match-item { padding:15px; margin-bottom:12px; border-radius:10px; border-left: 6px solid #cbd5e1; background: #fafafa; }
+.ai-integrity-tool .heat-high { background:#fee2e2; border-color: #ef4444; }
+.ai-integrity-tool .heat-mid { background:#ffedd5; border-color: #f97316; }
+.ai-integrity-tool .heat-low { background:#fef9c3; border-color: #eab308; }
+.ai-integrity-tool .heat-safe { background:#dcfce7; border-color: #22c55e; }
 </style>
 </head>
 
@@ -62,52 +65,60 @@
 <div class="ai-integrity-tool" id="aiTool">
   <div class="container">
     <h1>AI Content Integrity Checker</h1>
-    <p class="desc">Compare original and AI-generated text to ensure SEO keywords and integrity are maintained.</p>
+    <p class="desc">Verify SEO keyword retention and content similarity. Supports automatic structural analysis and manual keyword tracking.</p>
 
-    <!-- Target Keyword Box -->
-    <div class="keyword-input-wrapper">
-        <label><strong>Target Keywords (Optional):</strong> <em>Separate with commas (e.g. SEO, Marketing, AI)</em></label>
-        <input type="text" id="manualKeywords" class="keyword-input" placeholder="Enter keywords you MUST keep...">
+    <div class="input-section">
+        <!-- MANUAL TARGET KEYWORD BOX -->
+        <label for="manualKeywords">Target Keywords (Manual - Comma Separated):</label>
+        <input type="text" id="manualKeywords" class="manual-box" placeholder="e.g. SEO, Marketing, Strategy, Digital Tools">
+
+        <div class="grid">
+            <div>
+                <label>Original Source Content (HTML/Text):</label>
+                <textarea id="textA" placeholder="Paste original content here..."></textarea>
+            </div>
+            <div>
+                <label>AI-Generated / Rewritten Content:</label>
+                <textarea id="textB" placeholder="Paste rewritten content here..."></textarea>
+            </div>
+        </div>
+        
+        <button class="analyze-btn" onclick="runAnalysis()">Analyze Integrity</button>
     </div>
 
-    <div class="grid">
-      <textarea id="textA" placeholder="Original Content (can include H1 / H2 HTML)"></textarea>
-      <textarea id="textB" placeholder="AI-Generated / Rewritten Content"></textarea>
-    </div>
-
-    <button onclick="compare()">Analyze Content Integrity</button>
-
-    <!-- MANUAL KEYWORD SECTION -->
-    <div id="manualKeywordCard" class="card" style="display:none;">
-      <h3>Manual Keyword Analysis</h3>
-      <div class="badge-list" id="manualKeywordBadges"></div>
-      
-      <!-- New dedicated section for Lost Keywords -->
-      <div id="lostSummarySection" class="lost-summary-box" style="display:none;">
-          <strong>🚨 Critical SEO Alert: Missing Keywords</strong>
-          <div id="lostListText" class="lost-list-text"></div>
+    <!-- 1. MANUAL KEYWORD RESULT (ONLY VISIBLE IF BOX IS FILLED) -->
+    <div id="manualCard" class="card" style="display:none;">
+      <h3 style="margin-top:0">Manual Keyword Integrity</h3>
+      <div class="badge-list" id="kwBadges"></div>
+      <div id="lostAlert" class="lost-alert" style="display:none;">
+          <strong>🚨 LOST KEYWORDS DETECTED:</strong>
+          <p id="lostWordsList"></p>
       </div>
     </div>
 
+    <!-- 2. SIMILARITY SCORE -->
     <div class="card">
-      <h3>Content Similarity Score</h3>
-      <div class="meter"><span id="similarityBar"></span></div>
-      <div id="overallScore">—</div>
+      <h3 style="margin-top:0">Content Similarity Score</h3>
+      <div class="meter"><span id="simBar" style="width: 0%"></span></div>
+      <div id="simScoreText" class="score-val">—</div>
     </div>
 
+    <!-- 3. AUTOMATIC STRUCTURAL CHECK (ALWAYS RUNS) -->
     <div class="card">
-      <h3>Structural Keyword Loss (Weighted from HTML)</h3>
-      <div id="keywordLossResult">—</div>
+      <h3 style="margin-top:0">Automatic Structural Keyword Check</h3>
+      <div id="autoLossResult">Enter content to see HTML-based analysis.</div>
     </div>
 
+    <!-- 4. QUALITY SCORE -->
     <div class="card">
-      <h3>AI Rewrite Quality Score</h3>
-      <div id="qualityScore">—</div>
+      <h3 style="margin-top:0">AI Rewrite Quality</h3>
+      <div id="qualityResult">—</div>
     </div>
 
+    <!-- 5. HEATMAP -->
     <div class="card">
-      <h3>Plagiarism Heatmap</h3>
-      <div id="sentenceResults">—</div>
+      <h3 style="margin-top:0">Plagiarism Heatmap</h3>
+      <div id="heatmapResults">—</div>
     </div>
 
   </div>
@@ -115,108 +126,99 @@
 
 <script>
 const stopWords = new Set(["the","is","a","an","to","and","or","of","in","on","for","with","this","that","by","as","are","was","were","be","has","have"]);
-const normalize = t => t.toLowerCase().replace(/[^\w\s]/g,"").replace(/\s+/g," ").trim();
-const tokenize = t => normalize(t).split(" ").filter(w => w && !stopWords.has(w));
-const splitSentences = t => t.match(/[^.!?]+[.!?]?/g) || [];
+const norm = t => t.toLowerCase().replace(/[^\w\s]/g,"").replace(/\s+/g," ").trim();
+const tokenize = t => norm(t).split(" ").filter(w => w && !stopWords.has(w));
+const splitSent = t => t.match(/[^.!?]+[.!?]?/g) || [];
 
-function similarity(a,b){
-  const A=new Set(tokenize(a)), B=new Set(tokenize(b));
-  const common=[...A].filter(x=>B.has(x));
-  return common.length/Math.max(A.size,B.size,1);
+function getSimilarity(a,b){
+    const A=new Set(tokenize(a)), B=new Set(tokenize(b));
+    const common=[...A].filter(x=>B.has(x));
+    return common.length/Math.max(A.size,B.size,1);
 }
 
-function extractWeightedKeywords(html){
-  const temp=document.createElement("div");
-  temp.innerHTML=html;
-  const weights={};
-  const add=(words,w)=>words.forEach(k=>{ if(!k||stopWords.has(k))return; weights[k]=(weights[k]||0)+w; });
-  temp.querySelectorAll("h1").forEach(h=>add(tokenize(h.innerText),3));
-  temp.querySelectorAll("h2").forEach(h=>add(tokenize(h.innerText),2));
-  add(tokenize(temp.innerText),1);
-  return weights;
-}
+function runAnalysis(){
+    const A = document.getElementById('textA').value;
+    const B = document.getElementById('textB').value;
+    const MK = document.getElementById('manualKeywords').value;
 
-function compare(){
-  const A=document.getElementById('textA').value;
-  const B=document.getElementById('textB').value;
-  const MK=document.getElementById('manualKeywords').value;
+    if(!A || !B) return alert("Please provide both original and AI content.");
 
-  if(!A||!B) return alert("Please paste both contents to begin analysis.");
+    const SA = splitSent(A), SB = splitSent(B);
+    const B_low = B.toLowerCase();
+    let totalScore = 0, matches = [];
 
-  const SA=splitSentences(A), SB=splitSentences(B);
-  const B_lower = B.toLowerCase();
-  let totalSimScore=0, matches=[];
-
-  SA.forEach(sa=>{
-    let best=0, sbest="";
-    SB.forEach(sb=>{
-      const s=similarity(sa,sb);
-      if(s>best){best=s; sbest=sb;}
+    SA.forEach(sa => {
+        let best = 0, sbest = "";
+        SB.forEach(sb => {
+            const s = getSimilarity(sa,sb);
+            if(s > best){ best = s; sbest = sb; }
+        });
+        if(best >= 0.4){ matches.push({sa, sb:sbest, score:best}); totalScore += best; }
     });
-    if(best>=0.4){matches.push({sa,sb:sbest,score:best}); totalSimScore+=best;}
-  });
 
-  const sim=((totalSimScore/Math.max(SA.length,1))*100).toFixed(1);
-  document.getElementById('similarityBar').style.width=sim+"%";
-  document.getElementById('overallScore').innerHTML=`<span class="score">${sim}% similarity</span>`;
+    // Update Similarity
+    const sim = ((totalScore/Math.max(SA.length,1))*100).toFixed(1);
+    document.getElementById('simBar').style.width = sim+"%";
+    document.getElementById('simScoreText').innerText = sim+"% Similarity";
 
-  // --- MANUAL KEYWORD LOGIC ---
-  const badgeContainer = document.getElementById('manualKeywordBadges');
-  const lostSummaryBox = document.getElementById('lostSummarySection');
-  const lostListDisplay = document.getElementById('lostListText');
-  const manualCard = document.getElementById('manualKeywordCard');
+    // --- LOGIC FOR MANUAL KEYWORD CHECK ---
+    const manualCard = document.getElementById('manualCard');
+    if(MK.trim() !== "") {
+        manualCard.style.display = "block";
+        const targets = MK.split(",").map(k => k.trim()).filter(k => k);
+        let badgesHTML = "", lostKWs = [];
+        
+        targets.forEach(kw => {
+            const found = B_low.includes(kw.toLowerCase());
+            if(found) {
+                badgesHTML += `<span class="badge found">✔ ${kw}</span>`;
+            } else {
+                badgesHTML += `<span class="badge lost">✘ ${kw}</span>`;
+                lostKWs.push(kw);
+            }
+        });
+        document.getElementById('kwBadges').innerHTML = badgesHTML;
+        
+        const alertBox = document.getElementById('lostAlert');
+        if(lostKWs.length > 0) {
+            alertBox.style.display = "block";
+            document.getElementById('lostWordsList').innerText = lostKWs.join(", ");
+        } else {
+            alertBox.style.display = "none";
+        }
+    } else {
+        manualCard.style.display = "none";
+    }
 
-  if(MK.trim() !== ""){
-      const targetKWs = MK.split(",").map(k => k.trim()).filter(k => k);
-      let badgesHTML = "";
-      let lostKWs = [];
+    // --- LOGIC FOR AUTOMATIC CHECK ---
+    const temp = document.createElement("div");
+    temp.innerHTML = A;
+    const weights = {};
+    const addW = (words, w) => words.forEach(k => { if(k && !stopWords.has(k)) weights[k] = (weights[k]||0)+w; });
+    temp.querySelectorAll("h1").forEach(h=>addW(tokenize(h.innerText),3));
+    temp.querySelectorAll("h2").forEach(h=>addW(tokenize(h.innerText),2));
+    addW(tokenize(temp.innerText),1);
 
-      targetKWs.forEach(kw => {
-          const found = B_lower.includes(kw.toLowerCase());
-          if (found) {
-              badgesHTML += `<span class="badge badge-found">✔ ${kw}</span>`;
-          } else {
-              badgesHTML += `<span class="badge badge-lost">✘ ${kw}</span>`;
-              lostKWs.push(kw);
-          }
-      });
+    const Btokens = new Set(tokenize(B));
+    let lostW = 0, totalW = 0;
+    for(let k in weights){ totalW += weights[k]; if(!Btokens.has(k)) lostW += weights[k]; }
+    
+    document.getElementById('autoLossResult').innerHTML = lostW > 0 ? 
+        `⚠️ <strong>${lostW}</strong> weight points lost from HTML structure.` : "✅ No structural keyword loss detected.";
 
-      manualCard.style.display = "block";
-      badgeContainer.innerHTML = badgesHTML;
+    // Quality Score
+    const seo = ((totalW-lostW)/Math.max(totalW,1))*100;
+    const originality = 100 - sim;
+    const finalQuality = Math.round(seo*0.6 + originality*0.4);
+    document.getElementById('qualityResult').innerHTML = `<strong>${finalQuality}/100</strong><br><small>SEO Preservation: ${seo.toFixed(1)}% | Originality: ${originality.toFixed(1)}%</small>`;
 
-      if(lostKWs.length > 0) {
-          lostSummaryBox.style.display = "block";
-          lostListDisplay.innerText = lostKWs.join(", ");
-      } else {
-          lostSummaryBox.style.display = "none";
-      }
-  } else {
-      manualCard.style.display = "none";
-  }
-
-  // --- WEIGHTED HTML KEYWORD LOGIC ---
-  const weighted=extractWeightedKeywords(A);
-  const Btokens = new Set(tokenize(B));
-  let lostWeight=0, totalW=0;
-  for(let k in weighted){
-    totalW+=weighted[k];
-    if(!Btokens.has(k)) lostWeight+=weighted[k];
-  }
-
-  document.getElementById('keywordLossResult').innerHTML = lostWeight>0?`⚠️ <strong>${lostWeight}</strong> importance points lost from original HTML structure.` :"✅ No critical keyword loss detected from original structure.";
-
-  const seo=((totalW-lostWeight)/Math.max(totalW,1))*100;
-  const originality=100-sim;
-  const quality=Math.round(seo*0.6 + originality*0.4);
-
-  document.getElementById('qualityScore').innerHTML = `<strong>${quality}/100</strong><br>SEO Retention: ${seo.toFixed(1)}%<br>Originality: ${originality.toFixed(1)}%`;
-
-  document.getElementById('sentenceResults').innerHTML = matches.map(m=>`
-      <div class="match ${m.score>=0.8?'heat-high':m.score>=0.6?'heat-mid':m.score>=0.4?'heat-low':'heat-safe'}">
-        <strong>Original:</strong> ${m.sa}<br><strong>AI:</strong> ${m.sb}<br><span class="score">${(m.score*100).toFixed(0)}%</span>
-      </div>`).join("") || "No overlapping sentences found.";
+    // Heatmap
+    document.getElementById('heatmapResults').innerHTML = matches.map(m => `
+        <div class="match-item ${m.score>=0.8?'heat-high':m.score>=0.6?'heat-mid':m.score>=0.4?'heat-low':'heat-safe'}">
+            <strong>Orig:</strong> ${m.sa}<br><strong>AI:</strong> ${m.sb}<br>
+            <span style="font-size:12px; font-weight:bold; color:var(--primary)">Match: ${(m.score*100).toFixed(0)}%</span>
+        </div>`).join("") || "No matches found.";
 }
 </script>
-
 </body>
 </html>
